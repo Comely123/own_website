@@ -793,9 +793,11 @@ a { color: inherit; }
     padding: calc(var(--bar) + 16px) clamp(20px, 5vw, 32px) 160px;
   }
   .home__copy { padding-bottom: 158px; overflow-y: auto; }
-  .panel__inner--split { gap: 22px; }
+  /* About：窄屏与矮屏(含横屏手机)一律折叠为单列，避免照片在右栏压住获奖统计条 */
+  .panel__inner--split { grid-template-columns: 1fr; gap: 26px; }
   .strip { padding-bottom: 0; }   /* 移动端面板内部自行避让 picker，去除冗余底部留白 */
-  .about__shot { margin: 0 auto; max-width: 220px; }
+  /* 照片明确置于获奖统计条之下，并拉开间距；关闭 3D 旋转避免歪斜 */
+  .about__shot { margin: 34px auto 0; max-width: 220px; transform: none; }
   .contact { max-width: none; }
   .contact li { grid-template-columns: 64px 1fr; gap: 12px; }
 
