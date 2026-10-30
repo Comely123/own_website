@@ -1,0 +1,14 @@
+# Baidu Syncdisk temp files
+*.baiduyun.uploading.cfg
+*.baiduyun.cfg
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+*.swp
+
+# Internal tool previews (not part of the site)
+assets/img/_preview/
+
+# App marker files
+.wbapp*.genie
