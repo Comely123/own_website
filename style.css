@@ -781,24 +781,55 @@ a { color: inherit; }
   .picker__name.is-anim { animation: none; }
 }
 
-/* ===== Mobile & short-viewport hardening (anti "乱屏") =====
+/* ===== Mobile & short-viewport hardening (anti "乱屏" + 内容完整展示) =====
    触发器：窄屏(≤900) 或 矮屏(高度≤720，含横屏手机/矮窗口)。
-   普通桌面(宽>900 且 高>720)不命中，保持原"无滚动栏"设计。 */
+   普通桌面(宽>900 且 高>720)不命中，保持原设计。 */
 @media (max-width: 900px), (max-height: 720px) {
+  /* 通用面板：内容可纵向滚动，顶部避开顶栏、底部避开 picker */
   .panel__inner {
     justify-content: flex-start;
     overflow-y: auto;
     overscroll-behavior: contain;
-    padding: calc(var(--bar) + 14px) clamp(20px, 5vw, 30px) 152px;
+    padding: calc(var(--bar) + 16px) clamp(20px, 5vw, 32px) 160px;
   }
-  .home__copy { padding-bottom: 150px; overflow-y: auto; }
+  .home__copy { padding-bottom: 158px; overflow-y: auto; }
   .panel__inner--split { gap: 22px; }
-  .about__shot { margin: 0 auto; max-width: 240px; }
+  .strip { padding-bottom: 0; }   /* 移动端面板内部自行避让 picker，去除冗余底部留白 */
+  .about__shot { margin: 0 auto; max-width: 220px; }
   .contact { max-width: none; }
+  .contact li { grid-template-columns: 64px 1fr; gap: 12px; }
 
-  /* WORK 磁带页：仅底部详情行需抬高避开 picker（上半磁带行远离底部） */
-  .shelf-detail__scroll { padding-bottom: 150px; }
-  .shelf-arrows { bottom: 134px; }
+  /* WORK 磁带页：整体改可滚动单列流，关闭 JS 缩放，保证详情完整可读 */
+  .shelf-page {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-bottom: 160px;
+  }
+  .shelf-page__left {
+    border-right: 0;
+    border-bottom: 1px solid rgba(20,20,20,.12);
+    padding: calc(var(--bar) + 16px) clamp(20px, 5vw, 30px) 26px;
+    height: auto;
+    overflow: visible;
+  }
+  .shelf-page__right { height: auto; overflow: visible; }
+  .shelf-detail__scroll {
+    height: auto;
+    overflow: visible;
+    padding: 18px clamp(20px, 5vw, 30px) 24px;
+  }
+  .shelf-detail__fit {
+    transform: none !important;   /* 关闭移动端 JS 缩放，文字按自然大小显示 */
+    max-width: none;
+  }
+  .shelf-arrows {
+    position: static;             /* 移入正常流，避免绝对定位遮挡 */
+    margin: 12px 0 0;
+    bottom: auto; left: auto; right: auto;
+  }
 
   /* FILM 页：页脚与分隔线抬到 picker 之上 */
   .marcus__foot { bottom: 150px; }
@@ -811,9 +842,10 @@ a { color: inherit; }
   .title { font-size: clamp(24px, 6.4vw, 34px); }
   .title__sub { font-size: clamp(16px, 3.6vw, 22px); }
   .body { font-size: 15px; line-height: 1.62; }
-  .contact li { grid-template-columns: 60px 1fr; gap: 10px; }
+  .contact li { grid-template-columns: 58px 1fr; gap: 10px; }
   .about__stats { gap: 14px; }
   .stat__num { font-size: clamp(28px, 9vw, 38px); }
+  .about__shot { max-width: 200px; }
   .marcus .marcus__cutout { height: 62%; max-height: 58vh; }
   .shelf-cap__mask { width: 96%; }
 }
@@ -822,4 +854,7 @@ a { color: inherit; }
   .picker { padding: 22px 16px 14px; gap: 10px; }
   .chip__thumb { height: 38px; width: 38px; }
   .picker__meta { font-size: 12px; gap: 12px; }
+  .about__stats { gap: 12px; }
+  .panel__inner { padding: calc(var(--bar) + 12px) 18px 150px; }
+  .shelf-page { padding-bottom: 150px; }
 }
