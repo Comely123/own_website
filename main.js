@@ -408,14 +408,28 @@
       return window.matchMedia("(max-width: 900px), (max-height: 720px)").matches;
     }
 
+    function syncCompactChrome() {
+      var compact = isCompactLayout();
+      if (cap) {
+        cap.setAttribute("aria-hidden", compact ? "true" : "false");
+        if (compact) cap.setAttribute("hidden", "");
+        else cap.removeAttribute("hidden");
+      }
+      var fit = document.getElementById("shelf-fit");
+      if (fit && compact) {
+        fit.style.transform = "none";
+        fit.style.removeProperty("transform");
+      }
+    }
+
     // One shared scale for every project on desktop; mobile uses natural size + scroll.
     function measureGlobalScale() {
       var scroll = detail.querySelector(".shelf-detail__scroll");
       var fit = document.getElementById("shelf-fit");
       if (!scroll || !fit) return;
+      syncCompactChrome();
       if (isCompactLayout()) {
         globalScale = 1;
-        fit.style.transform = "none";
         return;
       }
       var cs = window.getComputedStyle(scroll);
@@ -446,7 +460,7 @@
       var fit = document.getElementById("shelf-fit");
       if (!fit) return;
       if (isCompactLayout()) {
-        fit.style.transform = "none";
+        fit.style.removeProperty("transform");
         return;
       }
       fit.style.transform = "scale(" + globalScale + ")";
@@ -550,17 +564,21 @@
     build();
     // seed caption/detail without animation
     active = 0;
-    var titleSp = cap.querySelector(".shelf-cap__title span");
-    var subSp = cap.querySelector(".shelf-cap__sub span");
-    var yearSp = cap.querySelector(".shelf-cap__year span");
-    if (titleSp) titleSp.textContent = BOOKS[0].title;
-    if (subSp) subSp.textContent = BOOKS[0].sub;
-    if (yearSp) yearSp.textContent = BOOKS[0].year;
+    if (cap) {
+      var titleSp = cap.querySelector(".shelf-cap__title span");
+      var subSp = cap.querySelector(".shelf-cap__sub span");
+      var yearSp = cap.querySelector(".shelf-cap__year span");
+      if (titleSp) titleSp.textContent = BOOKS[0].title;
+      if (subSp) subSp.textContent = BOOKS[0].sub;
+      if (yearSp) yearSp.textContent = BOOKS[0].year;
+    }
+    syncCompactChrome();
     measureGlobalScale();
     renderDetail(BOOKS[0]);
     requestAnimationFrame(frame);
     window.addEventListener("resize", function () {
       measure();
+      syncCompactChrome();
       measureGlobalScale();
       fitDetail();
     });

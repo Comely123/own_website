@@ -186,6 +186,7 @@ a { color: inherit; }
 .shelf-page {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  grid-template-rows: minmax(0, 1fr);
   height: 100%;
   width: 100%;
   min-height: 0;
@@ -193,6 +194,8 @@ a { color: inherit; }
 .shelf-page > * { min-height: 0; }
 .shelf-page__left {
   position: relative;
+  grid-column: 1;
+  grid-row: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -337,12 +340,15 @@ a { color: inherit; }
   white-space: normal;
 }
 .shelf-arrows {
-  position: absolute;
-  left: 20px;
-  right: 20px;
-  bottom: 100px;
+  grid-column: 1;
+  grid-row: 1;
+  align-self: end;
+  justify-self: stretch;
+  position: relative;
+  z-index: 4;
   display: flex;
   justify-content: space-between;
+  padding: 0 20px 100px;
   pointer-events: none;
 }
 .shelf-arrow {
@@ -354,11 +360,13 @@ a { color: inherit; }
   color: var(--ink-p);
   border: 1px solid rgba(20,20,20,.35);
   border-radius: 2px;
-  background: rgba(244,242,237,.7);
+  background: rgba(244,242,237,.85);
 }
 .shelf-arrow:hover { background: #fff; }
 
 .shelf-page__right {
+  grid-column: 2;
+  grid-row: 1;
   background: var(--sheet);
   min-height: 0;
   height: 100%;
@@ -850,11 +858,17 @@ a { color: inherit; }
   .contact li { grid-template-columns: 64px 1fr; gap: 12px; }
   .honors-mini { margin-top: 8px; }
 
-  /* WORK：单列可滚；舞台加高避免 3D 书脊溢出盖住标题 */
-  .panel--shelf { --H: min(26vh, 44vw); }
-  .shelf-page {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto;
+  /* WORK — single column: shelf → arrows → detail (no stacked titles) */
+  .panel--shelf {
+    --H: min(18vh, 34vw);
+    overflow: hidden;
+  }
+  .panel--shelf .shelf-page {
+    display: flex !important;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    grid-template-columns: none !important;
+    grid-template-rows: none !important;
     height: 100%;
     overflow-x: hidden;
     overflow-y: auto;
@@ -863,54 +877,118 @@ a { color: inherit; }
     -webkit-overflow-scrolling: touch;
     padding-bottom: var(--picker-clearance);
   }
-  .shelf-page__left {
-    border-right: 0;
-    border-bottom: 1px solid rgba(20,20,20,.12);
-    padding: calc(var(--bar) + env(safe-area-inset-top) + 12px) clamp(18px, 5vw, 28px) 20px;
-    height: auto;
-    overflow: visible;
+  .panel--shelf .shelf-page__left {
+    position: relative;
+    z-index: 1;
+    grid-column: auto !important;
+    grid-row: auto !important;
+    display: flex;
+    flex-direction: column;
     justify-content: flex-start;
+    align-items: stretch;
+    flex: 0 0 auto;
+    width: 100%;
+    height: auto !important;
+    min-height: 0;
+    max-height: none;
+    border-right: 0;
+    border-bottom: none;
+    padding: calc(var(--bar) + env(safe-area-inset-top) + 8px) clamp(16px, 5vw, 28px) 0;
+    overflow: hidden;
   }
-  .shelf-stage {
-    height: calc(var(--H) + 120px);
-    margin: 8px 0 4px;
-    flex-shrink: 0;
+  .panel--shelf .shelf-kicker {
+    position: static !important;
+    margin: 0 0 8px;
+    left: auto;
+    top: auto;
+  }
+  .panel--shelf .shelf-stage {
+    height: calc(var(--H) + 64px);
+    margin: 0;
+    flex: 0 0 auto;
+    overflow: hidden;
     touch-action: pan-x;
   }
-  .shelf-cap {
-    position: relative;
-    z-index: 3;
-    margin-top: 28px;
-    margin-bottom: 12px;
-    padding: 10px 8px 0;
-    width: 100%;
-    background: linear-gradient(180deg, rgba(237,235,230,0), var(--paper) 18%, var(--paper));
+  /* Cap duplicates detail copy — hide on compact */
+  .panel--shelf .shelf-cap {
+    display: none !important;
+    visibility: hidden;
+    height: 0;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
   }
-  .shelf-cap__title span { font-size: clamp(16px, 4.2vw, 20px); }
-  .shelf-page__right { height: auto; overflow: visible; }
-  .shelf-detail__scroll {
-    height: auto;
-    overflow: visible;
-    padding: 16px clamp(18px, 5vw, 28px) 48px;
-  }
-  .shelf-detail__link {
-    margin-bottom: 24px;
-  }
-  .shelf-detail__fit {
-    transform: none !important;
-    transform-origin: top left;
-    max-width: none;
-    width: 100%;
-  }
-  .shelf-detail__title { font-size: clamp(20px, 5.6vw, 26px); }
-  .shelf-detail__body { font-size: 14px; line-height: 1.55; }
-  .shelf-arrows {
-    position: static;
-    margin: 10px 0 0;
-    bottom: auto; left: auto; right: auto;
+  .panel--shelf .shelf-arrows {
+    position: relative !important;
+    grid-column: auto !important;
+    grid-row: auto !important;
+    align-self: stretch !important;
+    justify-self: auto !important;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 32px;
+    flex: 0 0 auto !important;
+    flex-shrink: 0 !important;
+    min-height: 56px !important;
+    height: auto !important;
+    margin: 8px 0 0;
+    padding: 10px 16px 14px;
     pointer-events: auto;
+    background: var(--paper);
+    border-bottom: 1px solid rgba(20,20,20,.12);
+    box-sizing: border-box;
   }
-  .shelf-arrow { width: 40px; height: 40px; }
+  .panel--shelf .shelf-arrow {
+    flex: 0 0 auto;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    background: #fff;
+  }
+  .panel--shelf .shelf-page__left,
+  .panel--shelf .shelf-page__right,
+  .panel--shelf .shelf-arrows {
+    min-height: auto;
+  }
+  .panel--shelf .shelf-page__left {
+    min-height: 0; /* keep stage clip ok */
+    flex-shrink: 0 !important;
+  }
+  .panel--shelf .shelf-page__right {
+    position: relative;
+    z-index: 2;
+    grid-column: auto !important;
+    grid-row: auto !important;
+    flex: 0 0 auto;
+    width: 100%;
+    height: auto !important;
+    min-height: 0;
+    overflow: visible !important;
+    background: var(--sheet);
+  }
+  .panel--shelf .shelf-detail__scroll {
+    display: block !important;
+    height: auto !important;
+    min-height: 0;
+    overflow: visible !important;
+    padding: 18px clamp(16px, 5vw, 28px) 24px;
+  }
+  .panel--shelf .shelf-detail__fit {
+    transform: none !important;
+    max-width: none !important;
+    width: 100%;
+  }
+  .panel--shelf .shelf-detail__fit > * + * { margin-top: 12px; }
+  .panel--shelf .shelf-detail__meta { font-size: 11px; letter-spacing: .1em; }
+  .panel--shelf .shelf-detail__title {
+    font-size: clamp(20px, 5.4vw, 26px);
+    line-height: 1.22;
+  }
+  .panel--shelf .shelf-detail__body { font-size: 14.5px; line-height: 1.62; }
+  .panel--shelf .shelf-detail__link { margin-top: 16px; margin-bottom: 8px; }
 
   /* MAP */
   .adventure-map { max-height: min(52vh, 420px); }
