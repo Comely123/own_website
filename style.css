@@ -764,32 +764,36 @@ a { color: inherit; }
   .panel__inner--split { grid-template-columns: 1fr; }
   .display { max-width: none; }
 
-  /* About: force photo below all copy/stats, never beside/over them */
-  .panel--about .panel__inner--split {
+  /* About + Contact: photo always BELOW text, never beside/over it */
+  .panel--about .panel__inner--split,
+  .panel--contact .panel__inner--split {
     display: flex !important;
     flex-direction: column;
     align-items: stretch;
     justify-content: flex-start;
     gap: 0;
   }
-  .panel--about .panel__inner--split > div:first-child {
+  .panel--about .panel__inner--split > div:first-child,
+  .panel--contact .panel__inner--split > div:first-child {
     order: 1;
     position: relative;
     z-index: 2;
     width: 100%;
   }
-  .panel--about .about__stats {
+  .panel--about .about__stats,
+  .panel--contact .contact {
     position: relative;
     z-index: 2;
     background: var(--bg);
   }
-  .panel--about .about__shot {
+  .panel--about .about__shot,
+  .panel--contact .about__shot {
     order: 2;
     position: relative;
     z-index: 0;
     width: min(200px, 52vw);
     max-width: min(200px, 52vw) !important;
-    margin: 64px auto 28px !important;
+    margin: 72px auto 32px !important;
     transform: none !important;
     flex-shrink: 0;
   }
@@ -835,9 +839,10 @@ a { color: inherit; }
   }
   .panel__inner--split { grid-template-columns: 1fr; gap: 22px; }
   .strip { padding-bottom: 0; }
-  .panel--about .about__shot {
-    margin-top: 72px !important;
-    margin-bottom: 36px !important;
+  .panel--about .about__shot,
+  .panel--contact .about__shot {
+    margin-top: 88px !important;
+    margin-bottom: 40px !important;
     width: min(180px, 48vw);
     max-width: min(180px, 48vw) !important;
   }
@@ -845,8 +850,8 @@ a { color: inherit; }
   .contact li { grid-template-columns: 64px 1fr; gap: 12px; }
   .honors-mini { margin-top: 8px; }
 
-  /* WORK：单列可滚，箭头进文档流，关闭缩放 */
-  .panel--shelf { --H: min(32vh, 52vw); }
+  /* WORK：单列可滚；舞台加高避免 3D 书脊溢出盖住标题 */
+  .panel--shelf { --H: min(26vh, 44vw); }
   .shelf-page {
     grid-template-columns: 1fr;
     grid-template-rows: auto auto;
@@ -864,8 +869,24 @@ a { color: inherit; }
     padding: calc(var(--bar) + env(safe-area-inset-top) + 12px) clamp(18px, 5vw, 28px) 20px;
     height: auto;
     overflow: visible;
+    justify-content: flex-start;
   }
-  .shelf-stage { height: calc(var(--H) + 56px); touch-action: pan-x; }
+  .shelf-stage {
+    height: calc(var(--H) + 120px);
+    margin: 8px 0 4px;
+    flex-shrink: 0;
+    touch-action: pan-x;
+  }
+  .shelf-cap {
+    position: relative;
+    z-index: 3;
+    margin-top: 28px;
+    margin-bottom: 12px;
+    padding: 10px 8px 0;
+    width: 100%;
+    background: linear-gradient(180deg, rgba(237,235,230,0), var(--paper) 18%, var(--paper));
+  }
+  .shelf-cap__title span { font-size: clamp(16px, 4.2vw, 20px); }
   .shelf-page__right { height: auto; overflow: visible; }
   .shelf-detail__scroll {
     height: auto;
@@ -917,8 +938,9 @@ a { color: inherit; }
   .contact li { grid-template-columns: 58px 1fr; gap: 10px; }
   .about__stats { grid-template-columns: repeat(2, 1fr); gap: 14px; }
   .stat__num { font-size: clamp(28px, 9vw, 38px); }
-  .panel--about .about__shot {
-    margin-top: 80px !important;
+  .panel--about .about__shot,
+  .panel--contact .about__shot {
+    margin-top: 96px !important;
     width: min(168px, 46vw);
     max-width: min(168px, 46vw) !important;
   }
