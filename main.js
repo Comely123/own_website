@@ -87,15 +87,21 @@
   }, { passive: true });
 
   // wheel still moves pages, but metro UI is gone — selection is via chips
+  function isVertScrollZone(el) {
+    if (!el || !el.closest) return false;
+    return !!(
+      el.closest(".film-rail") ||
+      el.closest(".shelf-detail__scroll") ||
+      el.closest(".shelf-page") ||
+      el.closest(".shelf-stage") ||
+      el.closest(".panel__inner") ||
+      el.closest(".home__copy")
+    );
+  }
+
   viewport.addEventListener("wheel", function (e) {
     if (Math.abs(e.deltaY) < Math.abs(e.deltaX)) return;
-    if (e.target.closest && (
-      e.target.closest(".film-rail") ||
-      e.target.closest(".shelf-detail__scroll") ||
-      e.target.closest(".shelf-page__right") ||
-      e.target.closest(".shelf-page__left") ||
-      e.target.closest(".shelf-stage")
-    )) return;
+    if (isVertScrollZone(e.target)) return;
     e.preventDefault();
     if (locking) return;
     if (Math.abs(e.deltaY) < 8) return;
@@ -398,11 +404,20 @@
       }
     }
 
-    // One shared scale for every project -> uniform font size (top-aligned, bottoms free).
+    function isCompactLayout() {
+      return window.matchMedia("(max-width: 900px), (max-height: 720px)").matches;
+    }
+
+    // One shared scale for every project on desktop; mobile uses natural size + scroll.
     function measureGlobalScale() {
       var scroll = detail.querySelector(".shelf-detail__scroll");
       var fit = document.getElementById("shelf-fit");
       if (!scroll || !fit) return;
+      if (isCompactLayout()) {
+        globalScale = 1;
+        fit.style.transform = "none";
+        return;
+      }
       var cs = window.getComputedStyle(scroll);
       var padTop = parseFloat(cs.paddingTop) || 0;
       var padBot = parseFloat(cs.paddingBottom) || 0;
@@ -430,6 +445,10 @@
     function fitDetail() {
       var fit = document.getElementById("shelf-fit");
       if (!fit) return;
+      if (isCompactLayout()) {
+        fit.style.transform = "none";
+        return;
+      }
       fit.style.transform = "scale(" + globalScale + ")";
     }
 
@@ -488,6 +507,8 @@
 
     stage.addEventListener("pointerdown", function (e) {
       if (e.button !== 0) return;
+      /* On compact layouts prefer arrows; avoid fighting page vertical scroll */
+      if (isCompactLayout() && e.pointerType === "touch") return;
       dragging = true;
       dragMoved = false;
       dragX0 = e.clientX;
