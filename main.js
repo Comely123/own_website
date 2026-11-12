@@ -185,7 +185,7 @@
         specs: [],
         images: [],
         cover: "assets/img/shelf/rail.webp",
-        link: { href: "https://www.metromtl.xyz/", label: "metromtl.xyz ↗" }
+        link: { href: "https://portal.nexduo.xyz/", label: "portal.nexduo.xyz ↗" }
       },
       {
         id: "jdpm",
@@ -227,7 +227,7 @@
         specs: [],
         images: [],
         cover: "assets/img/shelf/esg.webp",
-        link: { href: "https://esg.metromtl.xyz/", label: "esg.metromtl.xyz ↗" }
+        link: { href: "https://esg.nexduo.xyz/", label: "esg.nexduo.xyz ↗" }
       },
       {
         id: "insight",
